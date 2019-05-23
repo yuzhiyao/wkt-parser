@@ -289,7 +289,7 @@ function d2r(input) {
   return input * D2R;
 }
 
-function cleanWKT(wkt) {
+function cleanWKT(wkt, axis) {
   if (wkt.type === 'GEOGCS') {
     wkt.projName = 'longlat';
   } else if (wkt.type === 'LOCAL_CS') {
@@ -302,6 +302,23 @@ function cleanWKT(wkt) {
       wkt.projName = wkt.PROJECTION;
     }
   }
+
+   // yzy add 
+   if(axis && axis.length > 0){
+    var axisOrder = '';
+    axis.forEach(function(axis) {
+        if(axis.length >= 2) {
+            axisOrder += axis[1].substring(0, 1).toLowerCase();
+        }
+    });
+    if (axisOrder.length === 2) {
+        axisOrder += 'u';
+    }
+    if (axisOrder.length === 3) {
+        wkt.axis = axisOrder;
+    }
+  }
+
   if (wkt.UNIT) {
     wkt.units = wkt.UNIT.name.toLowerCase();
     if (wkt.units === 'metre') {
@@ -428,15 +445,33 @@ function cleanWKT(wkt) {
     wkt.lat_ts = wkt.lat1;
   }
 }
+
+function parserAxis(lisp){
+  var axis = [];
+  lisp.map(function(value){
+    if(Array.isArray(value) && value[0] === "AXIS"){
+      let info = [];
+        for(var index in value){
+            if(index != 0){
+                info.push(value[index]);
+            }
+        }
+        axis.push(info);
+    }
+  });
+  return axis;
+}
+
 var index = function(wkt) {
   var lisp = parseString(wkt);
   var type = lisp.shift();
   var name = lisp.shift();
   lisp.unshift(['name', name]);
   lisp.unshift(['type', type]);
-  var obj = {};
+  var obj = {}, 
+  axis = parserAxis(lisp);
   sExpr(lisp, obj);
-  cleanWKT(obj);
+  cleanWKT(obj, axis);
   return obj;
 };
 
