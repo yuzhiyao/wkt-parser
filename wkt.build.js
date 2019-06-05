@@ -302,9 +302,8 @@ function cleanWKT(wkt, axis) {
       wkt.projName = wkt.PROJECTION;
     }
   }
-
-   // yzy add 
-   if(axis && axis.length > 0){
+  // yzy add  http://docs.opengeospatial.org/is/12-063r5/12-063r5.html#39
+  if(axis && axis.length > 0){
     var axisOrder = '';
     axis.forEach(function(axis) {
         if(axis.length >= 2) {
@@ -318,7 +317,6 @@ function cleanWKT(wkt, axis) {
         wkt.axis = axisOrder;
     }
   }
-
   if (wkt.UNIT) {
     wkt.units = wkt.UNIT.name.toLowerCase();
     if (wkt.units === 'metre') {
@@ -452,7 +450,7 @@ function parserAxis(lisp){
     if(Array.isArray(value) && value[0] === "AXIS"){
       let info = [];
         for(var index in value){
-            if(index != 0){
+            if(index > 0){
                 info.push(value[index]);
             }
         }
