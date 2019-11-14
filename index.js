@@ -178,7 +178,7 @@ function parserAxis(lisp){
   var axis = [];
   lisp.map(function(value){
     if(Array.isArray(value) && value[0] === "AXIS"){
-      let info = [];
+      var info = [];
         for(var index in value){
             if(index != 0){
                 info.push(value[index]);
